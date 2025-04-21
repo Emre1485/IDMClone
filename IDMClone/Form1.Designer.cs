@@ -32,6 +32,7 @@
             btnDownload = new Button();
             lblStatus = new Label();
             progressBar1 = new ProgressBar();
+            btnAdvancedDownload = new Button();
             SuspendLayout();
             // 
             // txtUrl
@@ -45,7 +46,7 @@
             // 
             btnDownload.Location = new Point(376, 39);
             btnDownload.Name = "btnDownload";
-            btnDownload.Size = new Size(94, 29);
+            btnDownload.Size = new Size(157, 29);
             btnDownload.TabIndex = 1;
             btnDownload.Text = "Download";
             btnDownload.UseVisualStyleBackColor = true;
@@ -54,7 +55,7 @@
             // lblStatus
             // 
             lblStatus.AutoSize = true;
-            lblStatus.Location = new Point(183, 177);
+            lblStatus.Location = new Point(38, 168);
             lblStatus.Name = "lblStatus";
             lblStatus.Size = new Size(49, 20);
             lblStatus.TabIndex = 2;
@@ -67,11 +68,22 @@
             progressBar1.Size = new Size(317, 29);
             progressBar1.TabIndex = 3;
             // 
+            // btnAdvancedDownload
+            // 
+            btnAdvancedDownload.Location = new Point(376, 74);
+            btnAdvancedDownload.Name = "btnAdvancedDownload";
+            btnAdvancedDownload.Size = new Size(157, 29);
+            btnAdvancedDownload.TabIndex = 4;
+            btnAdvancedDownload.Text = "AdvancedDownload";
+            btnAdvancedDownload.UseVisualStyleBackColor = true;
+            btnAdvancedDownload.Click += btnAdvancedDownload_ClickAsync;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(530, 333);
+            ClientSize = new Size(557, 211);
+            Controls.Add(btnAdvancedDownload);
             Controls.Add(progressBar1);
             Controls.Add(lblStatus);
             Controls.Add(btnDownload);
@@ -88,5 +100,6 @@
         private Button btnDownload;
         private Label lblStatus;
         private ProgressBar progressBar1;
+        private Button btnAdvancedDownload;
     }
 }

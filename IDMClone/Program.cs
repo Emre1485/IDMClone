@@ -8,10 +8,10 @@ namespace IDMClone
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
             ApplicationConfiguration.Initialize();
             Application.Run(new Form1());
         }
+
     }
 }
