@@ -96,13 +96,22 @@ namespace IDMClone
                 long partSize = totalSize / numParts;
                 List<Task> tasks = new List<Task>();
 
+                CreateProgressBars(numParts); // önce progress barlarý oluþtur
+
                 for (int i = 0; i < numParts; i++)
                 {
                     long start = i * partSize;
                     long end = (i == numParts - 1) ? totalSize - 1 : (start + partSize - 1);
 
-                    tasks.Add(DownloadPart(url, outputPath, start, end));
+                    int index = i;
+                    var progress = new Progress<int>(value =>
+                    {
+                        progressBars[index].Value = value;
+                    });
+
+                    tasks.Add(DownloadPart(url, outputPath, start, end, progress));
                 }
+
 
                 // 3. Tüm parçalar indirilsin
                 await Task.WhenAll(tasks);
@@ -133,22 +142,53 @@ namespace IDMClone
         }
 
 
-        public async Task DownloadPart(string url, string outputPath, long start, long end)
+        public async Task DownloadPart(string url, string outputPath, long start, long end, IProgress<int> progress)
         {
             var request = new HttpRequestMessage(HttpMethod.Get, url);
             request.Headers.Range = new System.Net.Http.Headers.RangeHeaderValue(start, end);
 
             using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead);
-
-            response.EnsureSuccessStatusCode(); 
+            response.EnsureSuccessStatusCode();
 
             using var stream = await response.Content.ReadAsStreamAsync();
             using var outputStream = new FileStream(outputPath, FileMode.Open, FileAccess.Write, FileShare.Write);
 
             outputStream.Seek(start, SeekOrigin.Begin);
-            await stream.CopyToAsync(outputStream);
+
+            byte[] buffer = new byte[8192];
+            long totalRead = 0;
+            int read;
+            while ((read = await stream.ReadAsync(buffer, 0, buffer.Length)) > 0)
+            {
+                await outputStream.WriteAsync(buffer, 0, read);
+                totalRead += read;
+
+                int percent = (int)((totalRead * 100) / (end - start + 1));
+                progress.Report(percent);
+            }
         }
 
+
+        List<ProgressBar> progressBars = new List<ProgressBar>();
+        private void CreateProgressBars(int count)
+        {
+            panelProgressBars.Controls.Clear();
+            progressBars.Clear();
+
+            for (int i = 0; i < count; i++)
+            {
+                ProgressBar pb = new ProgressBar
+                {
+                    Width = panelProgressBars.Width - 20,
+                    Height = 20,
+                    Top = i * 25,
+                    Left = 10,
+                    Maximum = 100
+                };
+                panelProgressBars.Controls.Add(pb);
+                progressBars.Add(pb);
+            }
+        }
 
     }
 }
